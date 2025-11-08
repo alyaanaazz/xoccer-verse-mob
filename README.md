@@ -23,6 +23,9 @@ Kelas : C
 NPM : 2406425924
 ```
 
+<details>
+<summary><b>Tugas Individu 7</b></summary>
+
 ## Tugas 7: Elemen Dasar Flutter
 
 ### 1. Jelaskan apa itu widget tree pada Flutter dan bagaimana hubungan parent-child (induk-anak) bekerja antar widget.
@@ -84,6 +87,55 @@ NPM : 2406425924
 - `BuildContext` adalah referensi ke address widget di dalam widget tree, seperti sebuah address, ini sangat penting karena memungkinkan sebuah widget untuk mengakses data dan layanan dari widget parent atau bahkan widget leluhurnya (wkwkw), seperti mengakses tema aplikasi melalui `Theme.of(context)`, mendapatkan ukuran layar melalui `MediaQuery.of(context)`, atau menampilkan `SnackBar` menggunakan `ScaffoldMessenger.of(context)`. Setiap metode build menerima BuildContext sebagai parameter (`Widget build(BuildContext context)`), dan widget harus menggunakan parameter context ini untuk "melihat ke atas" pada tree dan berinteraksi dengan layanan yang dibutuhkan dari widget lain di atasnya.
 
 ### 6. Jelaskan konsep "hot reload" di Flutter dan bagaimana bedanya dengan "hot restart".
-- `Hot Reloa`d adalah fitur unggulan Flutter yang memungkinkan Anda menyuntikkan perubahan kode ke aplikasi yang sedang berjalan tanpa kehilangan state (status) saat ini, sehingga perubahan UI dan logika akan langsung terlihat dalam waktu kurang dari satu detik. Ini sangat cepat karena hanya membangun kembali widget tree yang terpengaruh. Sementara itu, `Hot Restart` menghentikan Dart Virtual Machine (VM) sepenuhnya dan memulai ulang aplikasi dari awal (metode `main()`), sehingga semua state aplikasi akan hilang. Hot Restart lebih lambat, namun dibutuhkan untuk perubahan yang lebih fundamental, seperti perubahan pada variabel tinal atau kode di initState() yang tidak bisa ditangani oleh Hot Reload.
+- `Hot Reload` adalah fitur unggulan Flutter yang memungkinkan saya menyuntikkan perubahan kode ke aplikasi yang sedang berjalan tanpa kehilangan state (status) saat ini, sehingga perubahan UI dan logika akan langsung terlihat dalam waktu kurang dari satu detik. Ini sangat cepat karena hanya membangun kembali widget tree yang terpengaruh. Sementara itu, `Hot Restart` menghentikan Dart Virtual Machine (VM) sepenuhnya dan memulai ulang aplikasi dari awal (metode `main()`), sehingga semua state aplikasi akan hilang. Hot Restart lebih lambat, namun dibutuhkan untuk perubahan yang lebih fundamental, seperti perubahan pada variabel tinal atau kode di initState() yang tidak bisa ditangani oleh Hot Reload.
 
 tugas individu 7 done :p
+</details>
+
+## Tugas 8: Flutter Navigation, Layouts, Forms, and Input Elements
+
+### 1.  Jelaskan perbedaan antara Navigator.push() dan Navigator.pushReplacement() pada Flutter. Dalam kasus apa sebaiknya masing-masing digunakan pada aplikasi Football Shop kamu?
+1. `Navigator.push()`
+    - Fungsi utama : Menambahkan halaman baru di atas tumpukan yang sudah ada.
+    - Stack : Halaman lama tetap ada.
+    - Back : Pengguna dapat kembali ke halaman sebelumnya dengan tombol back (di AppBar atau fisik).
+2. `Navigator.pushReplacement()`
+    - Fungsi utama : Mengganti halaman saat ini dengan halaman baru, dan menghapus halaman saat ini dari stack.
+    - Stack : Halaman lama dihilangkan..
+    - Back : Pengguna tidak dapat kembali ke halaman yang diganti/dihapus.
+- Dalam aplikasi Xoccer Verse, pemilihan antara `Navigator.push()` dan `Navigator.pushReplacement()` sangat penting untuk mengelola riwayat navigasi (stack). `Navigator.push()` digunakan ketika developer ingin membawa user ke halaman baru, namun tetap mengizinkan mereka untuk kembali ke halaman sebelumnya. Contohnya adalah saat user beralih dari daftar produk ke halaman detail produk atau ketika membuka formulir add product (NewsFormPage) dari halaman utama. Dalam kasus-kasus ini, halaman lama tetap berada di stack, memungkinkan navigasi kembali yang mulus, seperti yang ditunjukkan dalam kode LeftDrawer untuk "Add Product": Navigator.push(...). Sebaliknya, `Navigator.pushReplacement()` digunakan ketika saya ingin mengganti halaman yang sedang aktif dengan halaman baru dan menghapus halaman lama secara permanen dari stack. Ini sangat krusial untuk skenario reset navigasi atau mencegah pengguna kembali ke halaman yang sudah tidak relevan. Aplikasi Xoccer Verse menggunakannya dalam LeftDrawer untuk navigasi kembali ke halaman "Home" juga menggunakan N`avigator.pushReplacement()`, yang efektif mereset tumpukan halaman agar halaman utama selalu berada di posisi paling atas, seperti yang tertera dalam kode LeftDrawer untuk `"Home": Navigator.pushReplacement(...)`.
+
+### 2. Bagaimana kamu memanfaatkan hierarchy widget seperti Scaffold, AppBar, dan Drawer untuk membangun struktur halaman yang konsisten di seluruh aplikasi?
+- Scaffold :
+    - Berfungsi sebagai kanvas dasar untuk setiap halaman. Menyediakan slot struktural standar seperti appBar, body, drawer, dan bottomNavigationBar.
+    - Konsistensi: Memastikan setiap halaman memiliki latar belakang, area aman, dan kerangka yang terstruktur, memudahkan penerapan global theme.
+
+- AppBar:
+    - Menampilkan judul halaman, tombol navigasi (leading icon seperti tombol back atau menu), dan aksi (seperti ikon keranjang atau search).
+    - Konsistensi: Menjaga agar judul dan warna header tetap seragam di semua halaman. Ketika tombol back muncul secara otomatis, ini mengindikasikan navigasi yang jelas.
+
+- Drawer (Menu Samping):
+    - Menyediakan navigasi utama aplikasi (seperti Home, Add Product, dll.) di satu tempat yang tersembunyi.
+    - Konsistensi: Karena saya membuat LeftDrawer sebagai widget terpisah, saya hanya perlu memanggilnya di setiap Scaffold (drawer: LeftDrawer(),). Ini memastikan semua halaman yang menggunakan Drawer memiliki daftar menu navigasi yang sama persis, meningkatkan pengalaman pengguna.
+
+### 3. Dalam konteks desain antarmuka, apa kelebihan menggunakan layout widget seperti Padding, SingleChildScrollView, dan ListView saat menampilkan elemen-elemen form? Berikan contoh penggunaannya dari aplikasi kamu.
+1. Padding
+    - Kelebihan : Memberikan jarak spasi yang konsisten di sekitar elemen (misalnya, `TextFormField`).
+    - Contoh Penggunaan : Digunakan di sekitar setiap `TextFormField` dan `DropdownButtonFormField` untuk memisahkannya secara visual dan mencegah elemen menempel ke tepi layar atau elemen lain.
+2. SingleChildScrollView :
+    - Kelebihan : Mencegah overflow error (kesalahan pixel) ketika formulir diisi dan keyboard muncul atau ketika konten formulir melebihi ukuran layar.
+    - Contoh Penggunaan : Harus membungkus Column utama di dalam Form saya. Ini memungkinkan pengguna untuk menggulir (scroll) formulir ke atas/bawah.
+3. Column / Row :
+    - Kelebihan : Menata elemen-elemen secara vertikal (Column) atau horizontal (Row) secara terstruktur.
+    - Contoh Penggunaan : Saya menggunakan Column untuk menata semua Padding, TextFormField, dan tombol secara vertikal dari atas ke bawah.
+
+### 4.  Bagaimana kamu menyesuaikan warna tema agar aplikasi Football Shop (Xoccer Verse) memiliki identitas visual yang konsisten dengan brand toko?
+- Untuk memberikan identitas visual yang konsisten pada aplikasi Football Shop (Xoccer Verse) saya, saya perlu mendefinisikan schema warna utama dan menerapkannya secara strategis menggunakan ThemeData.
+- Langkah Penyesuaian Tema:
+    - mendefinisikan Brand Color: Pilih satu atau dua warna utama yang merepresentasikan brand saya (misalnya, pink dalam aplikasi saya).
+    - Menggunakan `ThemeData` di `MaterialApp`: Ubah warna global di file utama saya (`main.dart`).
+    - menerapkan Warna Aksen Strategis: menggunakan warna aksen (`Colors.pinkAccent`) untuk:
+        - Aksi Utama: Tombol "Save" (ElevatedButton).
+        - Header: `DrawerHeader` dan `AppBar` (dengan `backgroundColor: Theme.of(context).primaryColor` atau `Theme.of(context).colorScheme.secondary`).
+        - Ikon Input: Ikon di dalam `TextFormField` (`prefixIcon`).
+- Dengan cara ini, aplikasi saya akan memiliki palet warna yang kohesif, di mana warna utama (Pink) memberikan stabilitas dan warna aksen (Pink Accent) memberikan daya tarik visual pada elemen interaktif.

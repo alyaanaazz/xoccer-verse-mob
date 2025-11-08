@@ -234,7 +234,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SwitchListTile(
-                      title: const Text("Tandai sebagai Berita Unggulan"),
+                      title: const Text("Is Featured"),
                       value: _isFeatured,
                       onChanged: (bool value) {
                         setState(() {
