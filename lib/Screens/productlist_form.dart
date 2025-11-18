@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-// Impor drawer yang sudah dibuat sebelumnya
 import 'package:xoccer_verse/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:xoccer_verse/Screens/menu.dart';
 
-class NewsFormPage extends StatefulWidget {
-    const NewsFormPage({super.key});
+class ProductFormPage extends StatefulWidget {
+    const ProductFormPage({super.key});
     
     @override
-    State<NewsFormPage> createState() => _NewsFormPageState();
+    State<ProductFormPage> createState() => _ProductFormPageState();
 }
 
-class _NewsFormPageState extends State<NewsFormPage> {
+class _ProductFormPageState extends State<ProductFormPage> {
     final _formKey = GlobalKey<FormState>();
     String _name = "";
     int _price = 0;
@@ -32,6 +35,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
 
     @override
     Widget build(BuildContext context) {
+        final request = context.watch<CookieRequest>();
         return Scaffold(
           appBar: AppBar(
             title: const Center(
@@ -78,6 +82,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Price",
                         labelText: "Price",
@@ -110,6 +115,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: "Discount",
                         labelText: "Discount",
@@ -124,9 +130,36 @@ class _NewsFormPageState extends State<NewsFormPage> {
                       },
                       validator: (String? value) {
                         final int? discount = int.tryParse(value!);
-                        if (discount == null || discount < 0) {
+                        if (discount == null || discount < 0 || discount > 100) {
                           
-                          return "Discount cannot be negative!";
+                          return "Discount must be between 0 and 100!";
+                        }
+
+                        return null;
+                      },
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: "Stock",
+                        labelText: "Stock",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      onChanged: (String? value) {
+                        setState(() {
+                          _stock = int.tryParse(value!) ?? 0;
+                        });
+                      },
+                      validator: (String? value) {
+                        final int? stock = int.tryParse(value!);
+                        if (stock == null || stock < 0) {
+                          
+                          return "Stock cannot be negative!";
                         }
 
                         return null;
@@ -173,7 +206,7 @@ class _NewsFormPageState extends State<NewsFormPage> {
                       ),
                       onChanged: (String? value) {
                         setState(() {
-                          _name = value!;
+                          _brand = value!;
                         });
                       },
                       validator: (String? value) {
@@ -254,44 +287,42 @@ class _NewsFormPageState extends State<NewsFormPage> {
                           backgroundColor:
                               MaterialStateProperty.all(Colors.pink[300]),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text('Product successfully added!'),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Name: $_name'),
-                                        Text('Price: $_price'),
-                                        Text('Discount: $_discount'),
-                                        Text('Stock: $_stock'),
-                                        Text('Brand: $_brand'),
-                                        Text('Description: $_description'),
-                                        Text('Category: $_category'),
-                                        Text('Thumbnail: $_thumbnail'),
-                                        Text(
-                                            'Unggulan: ${_isFeatured ? "Ya" : "Tidak"}'),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text('OK'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        _formKey.currentState!.reset();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
+                            // Replace the URL with your app's URL
+                            // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+                            // If you using chrome,  use URL http://localhost:8000
+                            
+                            final response = await request.postJson(
+                              "http://localhost:8000/create-flutter/",
+                              jsonEncode({
+                                "name": _name,
+                                "price": _price,
+                                "discount": _discount,
+                                "stock": _stock,
+                                "brand": _brand,
+                                "description": _description,
+                                "category": _category,
+                                "thumbnail": _thumbnail,
+                                "is_featured": _isFeatured,
+                              }),
                             );
-                        
+                            if (context.mounted) {
+                              if (response['status'] == 'success') {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Product successfully saved!"),
+                                ));
+                                Navigator.pop(
+                                  context,
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text("Something went wrong, please try again."),
+                                ));
+                              }
+                            }
                           }
                         },
                         child: const Text(
