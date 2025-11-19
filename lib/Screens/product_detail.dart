@@ -164,36 +164,58 @@ class ProductDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8), 
 
-                  // ⭐️ BLOK HARGA DISKON
                   if (isDiscounted)
                     Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start, 
                       children: [
-                        // Harga Awal (Dicoret)
                         Text(
                           formattedOriginalPrice,
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             color: Colors.grey,
-                            // Garis coret
                             decoration: TextDecoration.lineThrough, 
                             decorationColor: Colors.grey,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        // Harga Diskon (Tebal & Merah)
-                        Text(
-                          formattedDiscountedPrice,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 28.0,
-                            fontWeight: FontWeight.w800, // Extra Bold
-                            color: Colors.red.shade700, // Warna merah
-                          ),
+                        // Harga Diskon + Badge Diskon
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start, 
+                          children: [
+                            // Harga Diskon
+                            Text(
+                              formattedDiscountedPrice,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 28.0,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.red.shade700,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+
+                            // badge diskon
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade700, // Warna latar belakang merah
+                                borderRadius: BorderRadius.circular(6.0),
+                              ),
+                              child: Text(
+                                '-${product.discount}%', 
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.white, // Warna teks putih
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     )
                   else
-                    // Harga Normal (Jika tidak ada diskon)
+                    // Harga Normal kalo gada diskon
                     Text(
                       formattedOriginalPrice,
                       style: GoogleFonts.plusJakartaSans(
@@ -205,7 +227,7 @@ class ProductDetailPage extends StatelessWidget {
 
                   const Divider(height: 32),
 
-                  // Full content (Description)
+                  // Full Description)
                   Text(
                     product.description,
                     style: GoogleFonts.plusJakartaSans(

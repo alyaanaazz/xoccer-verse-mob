@@ -5,6 +5,7 @@ import 'package:xoccer_verse/Screens/product_detail.dart';
 import 'package:xoccer_verse/widgets/product_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProductEntryListPage extends StatefulWidget {
   final bool isMyProducts;
@@ -21,7 +22,7 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
     String url = widget.isMyProducts
-        ? 'http://localhost:8000/my-json/' // Endpoint untuk My Products
+        ? 'http://localhost:8000/my-json/' // endpoint untuk My Products
         : 'http://localhost:8000/json/';
 
     final response = await request.get(url);
@@ -91,15 +92,46 @@ class _ProductEntryListPageState extends State<ProductEntryListPage> {
               ),
             );
           } else {
-            if (!snapshot.hasData) {
-              return const Column(
-                children: [
-                  Text(
-                    'There are no products in the list yet.',
-                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-                  ),
-                  SizedBox(height: 8),
-                ],
+            if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+              String infoText = widget.isMyProducts
+                  ? 'You haven\'t uploaded any products yet.'
+                  : 'There are no products in the list yet.';
+
+              return Center( // Pusatkan konten di tengah layar
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      widget.isMyProducts
+                          ? Icons.inventory_2_outlined // Ikon untuk produk kosong
+                          : Icons.sentiment_dissatisfied, // Ikon untuk list kosong
+                      size: 50,
+                      color: Colors.grey.shade500,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      infoText,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Jika My Products, berikan saran
+                    if (widget.isMyProducts)
+                      Text(
+                        'Please add new products via the "Add Product" menu.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                  ],
+                ),
               );
             } else {
               return ListView.builder(

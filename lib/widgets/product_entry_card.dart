@@ -13,6 +13,7 @@ class ProductEntryCard extends StatelessWidget {
     required this.onTap,
   });
 
+  // method buat ngeformat price nya.
   String _formatCurrency(num amount) {
     final formatter = NumberFormat.currency(
       locale: 'id_ID', 
@@ -72,7 +73,6 @@ class ProductEntryCard extends StatelessWidget {
                 const SizedBox(height: 6),
 
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -91,23 +91,7 @@ class ProductEntryCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
 
-                    // Container(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.grey.shade300,
-                    //     borderRadius: BorderRadius.circular(6),
-                    //   ),
-                    //   child: Text(
-                    //     product.brand.toUpperCase(),
-                    //     style: GoogleFonts.plusJakartaSans(
-                    //       fontSize: 10,
-                    //       fontWeight: FontWeight.bold,
-                    //       color: Colors.grey.shade800,
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(width: 8),
-
+                    // badge isFeeatured
                     if (product.isFeatured)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -127,7 +111,8 @@ class ProductEntryCard extends StatelessWidget {
                       ),
                     const SizedBox(width: 8),
 
-                    if (product.itemViews > 20) // Asumsi HOT juga terkait dengan isFeatured atau ada logika lain
+                    // badge hot
+                    if (product.itemViews > 20)
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8.0, vertical: 4.0),
@@ -148,6 +133,7 @@ class ProductEntryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
+                // description area
                 Text(
                   product.description.length > 100
                       ? '${product.description.substring(0, 100)}...'
@@ -158,38 +144,67 @@ class ProductEntryCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
 
+                // price area
                 if (isDiscounted)
-                  Row(
-                    children: [
-                      Text(
-                        formattedOriginalPrice,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          color: Colors.grey,
-                          decoration: TextDecoration.lineThrough, 
-                          decorationColor: Colors.grey,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start, 
+                      children: [
+                        Text(
+                          formattedOriginalPrice,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 16,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough, 
+                            decorationColor: Colors.grey,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        formattedDiscountedPrice,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red.shade700,
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start, 
+                          children: [
+                            Text(
+                              formattedDiscountedPrice,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.red.shade700,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade700, 
+                                borderRadius: BorderRadius.circular(6.0),
+                              ),
+                              child: Text(
+                                '-${product.discount}%', 
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.white, 
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
+                      ],
+                    )
+                  else
+                    Text(
+                      formattedOriginalPrice,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
                       ),
-                    ],
-                  )
-                else
-                  Text(
-                    formattedOriginalPrice,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
                     ),
-                  ),
+
+                  const Divider(height: 32),
+
+      
               ],
             ),
           ),
